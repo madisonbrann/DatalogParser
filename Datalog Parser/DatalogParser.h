@@ -18,24 +18,24 @@ public:
 	virtual ~DatalogParser();
 	// grammar functions
 	void match(string item);
-	void operator_thing (Token* token);
-	void expression(Token* token);
-	void parameter(Token* token);
-	void idList(Token* token);
-	void stringList(Token* token);
-	void parameterList(Token* token);
-	void predicateList(Token* token);
-	void predicate(Token* token);
-	void headPredicate(Token* token);
-	void query(Token* token);
-	void rule(Token* token);
-	void fact(Token* token);
-	void scheme(Token* token);
-	void queryList(Token* token);
-	void ruleList(Token* token);
-	void factList(Token* token);
-	void schemeList(Token* token);
-	void datalogProgram(Token* token);
+	void operator_thing ();
+	void expression();
+	void parameter();
+	void idList();
+	void stringList();
+	void parameterList();
+	void predicateList();
+	void predicate();
+	void headPredicate();
+	void query();
+	void rule();
+	void fact();
+	void scheme();
+	void queryList();
+	void ruleList();
+	void factList();
+	void schemeList();
+	void datalogProgram();
 
 	//normal functions
 	void parse_tokens();

@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 	Tokenizer* myTokenizer = new Tokenizer();
 	token_vector = myTokenizer->herewego(in);
 	DatalogParser* myDatalogParser = new DatalogParser(token_vector);
-//	myDatalogParser->parse_tokens();
+	myDatalogParser->parse_tokens();
 
 	system("pause");
 
