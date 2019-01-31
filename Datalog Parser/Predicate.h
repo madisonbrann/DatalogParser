@@ -39,7 +39,7 @@ public:
 		{
 			ss << content.at(i)->to_string();
 			if (name != "Schemes") ss << ".";
-			ss << endl;
+			//ss << endl;
 		}
 		return ss.str();
 	}

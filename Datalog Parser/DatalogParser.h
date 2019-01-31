@@ -27,6 +27,7 @@ public:
 	void stringList(Parameter* myParameter);
 	void parameterList(Parameter* myParameter);
 	void predicateList(Rule* myRule);
+	void queryPredicate();
 	void predicate(Rule* myRule);
 	void headPredicate(Rule* myRule);
 	void query();

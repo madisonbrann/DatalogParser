@@ -36,7 +36,14 @@ DatalogParser::~DatalogParser()
 	}
 	for (unsigned int i = 0; i < QueriePredicates.size(); i++)
 	{
-		delete QueriePredicates.at(i);
+		try
+		{
+			delete QueriePredicates.at(i);
+		}
+		catch(string e)
+		{
+
+		}
 	}
 	delete SchemePredicates[0];
 }
@@ -143,6 +150,21 @@ void DatalogParser::predicateList(Rule* myRule)
 		predicateList(myRule);
 	}
 }
+
+void DatalogParser::queryPredicate()
+{
+	Predicate* myPredicate = new Predicate(token_vector.at(token_number)->get_output());
+	match("ID");
+	match("LEFT_PAREN");
+	Parameter* myParameter = new Parameter(token_vector.at(token_number)->get_output());
+	myPredicate->addParameter(myParameter);
+	parameter(myParameter);
+	parameterList(myParameter);
+	match("RIGHT_PAREN");
+	myParameter->removeFirstString();
+	QueriePredicates.push_back(myPredicate);
+}
+
 void DatalogParser::predicate(Rule* myRule)
 {
 	Predicate* myPredicate = new Predicate(token_vector.at(token_number)->get_output());
@@ -159,6 +181,7 @@ void DatalogParser::predicate(Rule* myRule)
 void DatalogParser::headPredicate(Rule* myRule)
 {
 	Predicate* myPredicate = new Predicate(token_vector.at(token_number)->get_output());
+	//QueriePredicates.push_back(myPredicate);
 	match("ID");
 	match("LEFT_PAREN");
 	Parameter* myParameter = new Parameter(token_vector.at(token_number)->get_output());
@@ -170,8 +193,7 @@ void DatalogParser::headPredicate(Rule* myRule)
 }
 void DatalogParser::query()
 {
-	Rule* myRule = new Rule();
-	 predicate(myRule);
+	 queryPredicate();
 	match("Q_MARK");
 }
 void DatalogParser::rule()
@@ -297,9 +319,9 @@ void DatalogParser::get_domain()
 string DatalogParser::to_string()
 {
 	stringstream ss;
-	for (unsigned int i = 0; i < RulePredicates.size(); i++)
+	for (unsigned int i = 0; i < QueriePredicates.size(); i++)
 	{
-		ss << RulePredicates.at(i)->to_string() << endl;
+		ss << QueriePredicates.at(i)->to_string() << endl;;
 	}
 	return ss.str();
 }

@@ -12,3 +12,4 @@ Rules:
 
 Queries:
   HasSameAddress('Snoopy',Who)?
+  HasSameAddress('Snoopy',Who)?
