@@ -41,8 +41,8 @@ public:
 	void datalogProgram();
 
 	//normal functions
-	void parse_tokens();
-	void get_domain();
+	bool parse_tokens();
+	void sortDomain();
 	string to_string();
 };
 

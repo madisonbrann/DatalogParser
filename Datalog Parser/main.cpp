@@ -29,13 +29,11 @@ int main(int argc, char *argv[])
 	Tokenizer* myTokenizer = new Tokenizer();
 	token_vector = myTokenizer->herewego(in);
 	DatalogParser* myDatalogParser = new DatalogParser(token_vector);
-	myDatalogParser->parse_tokens();
-
-	cout << myDatalogParser->to_string();
+	if (myDatalogParser->parse_tokens()) cout << myDatalogParser->to_string();
 	delete myTokenizer;
 	// delete myPredicate;
 	delete myDatalogParser;
-	system("pause");
+	// system("pause");
 
 	return 0;
 }

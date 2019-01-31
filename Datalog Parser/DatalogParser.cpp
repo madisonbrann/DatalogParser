@@ -3,12 +3,14 @@
 #include "Parameter.h"
 #include "Rule.h"
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
 vector<Predicate*> SchemePredicates;
 vector<Predicate*> FactPredicates;
 vector<Rule*> RulePredicates;
 vector<Predicate*> QueriePredicates;
+vector<string> domain_holder;
 
 DatalogParser::DatalogParser(vector<Token*> token_vector_in)
 {
@@ -36,16 +38,8 @@ DatalogParser::~DatalogParser()
 	}
 	for (unsigned int i = 0; i < QueriePredicates.size(); i++)
 	{
-		try
-		{
 			delete QueriePredicates.at(i);
-		}
-		catch(string e)
-		{
-
-		}
 	}
-	delete SchemePredicates[0];
 }
 
 
@@ -120,6 +114,7 @@ void DatalogParser::stringList(Parameter* myParameter)
 	{
 		match("COMMA");
 		myParameter->addString(token_vector.at(token_number)->get_output());
+		domain_holder.push_back(token_vector.at(token_number)->get_output());
 		match("STRING");
 		stringList(myParameter);
 	}
@@ -213,6 +208,7 @@ void DatalogParser::fact()
 	match("LEFT_PAREN");
 	Parameter* myParameter = new Parameter(token_vector.at(token_number)->get_output());
 	myFactPredicate->addParameter(myParameter);
+	domain_holder.push_back(token_vector.at(token_number)->get_output());
 	match("STRING");
 	stringList(myParameter);
 	match("RIGHT_PAREN");
@@ -298,7 +294,7 @@ void DatalogParser::datalogProgram()
 }
 
 //normal functions
-void DatalogParser::parse_tokens()
+bool DatalogParser::parse_tokens()
 {
 	try
 	{
@@ -308,20 +304,51 @@ void DatalogParser::parse_tokens()
 	catch (string e)
 	{
 		cout << "Failure!\n  (" << token_vector.at(token_number)->get_type() << ",\""<< token_vector.at(token_number)->get_output() << "\"," << token_vector.at(token_number)->get_line() << ")" << endl;
+		return false;
 	}
+	return true;
 }
 
-void DatalogParser::get_domain()
+void DatalogParser::sortDomain()
 {
-
+	sort(domain_holder.begin(), domain_holder.end());
+	domain_holder.erase(unique(domain_holder.begin(), domain_holder.end()), domain_holder.end());
 }
 
 string DatalogParser::to_string()
 {
 	stringstream ss;
+
+	ss << "Schemes(" << SchemePredicates.size() << "):" << endl;
+	for (unsigned int i = 0; i < SchemePredicates.size(); i++)
+	{
+		ss << "  " << SchemePredicates.at(i)->to_string() << endl;
+	}
+
+	ss << "Facts(" << FactPredicates.size() << "):" << endl;
+	for (unsigned int i = 0; i < FactPredicates.size(); i++)
+	{
+		ss << "  " << FactPredicates.at(i)->to_string() << "." << endl;
+	}
+
+	ss << "Rules(" << RulePredicates.size() << "):" << endl;
+	for (unsigned int i = 0; i < RulePredicates.size(); i++)
+	{
+		ss << "  " << RulePredicates.at(i)->to_string() << endl;
+	}
+
+	ss << "Queries(" << QueriePredicates.size() << "):" << endl;
 	for (unsigned int i = 0; i < QueriePredicates.size(); i++)
 	{
-		ss << QueriePredicates.at(i)->to_string() << endl;;
+		ss << "  " << QueriePredicates.at(i)->to_string() << "?" << endl;
 	}
+
+	sortDomain();
+	ss << "Domain(" << domain_holder.size() << "):" << endl;
+	for (unsigned int i = 0; i < domain_holder.size(); i++)
+	{
+		ss << "  " << domain_holder.at(i) << endl;
+	}
+
 	return ss.str();
 }

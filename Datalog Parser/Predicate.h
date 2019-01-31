@@ -38,8 +38,6 @@ public:
 		for (unsigned int i = 0; i < content.size(); i++)
 		{
 			ss << content.at(i)->to_string();
-			if (name != "Schemes") ss << ".";
-			//ss << endl;
 		}
 		return ss.str();
 	}
