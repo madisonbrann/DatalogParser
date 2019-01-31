@@ -45,8 +45,11 @@ void Tokenizer::printToken(string type, string output, int line_num)
 {
 //	cout << "(" << type << ",\"" << output << "\"," << line_num << ")" << endl;
 	total_tokens++;
-	Token* token = new Token(type, output, line_num);
-	token_vector.push_back(token);
+	if (type != "COMMENT")
+	{
+		Token* token = new Token(type, output, line_num);
+		token_vector.push_back(token);
+	}
 }
 
 

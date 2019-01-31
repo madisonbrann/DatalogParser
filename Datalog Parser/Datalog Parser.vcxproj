@@ -116,6 +116,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DatalogParser.h" />
+    <ClInclude Include="Parameter.h" />
+    <ClInclude Include="Predicate.h" />
+    <ClInclude Include="Rule.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="Tokenizer.h" />
   </ItemGroup>

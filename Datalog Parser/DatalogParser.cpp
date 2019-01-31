@@ -9,7 +9,10 @@ DatalogParser::DatalogParser(vector<Token*> token_vector_in)
 }
 DatalogParser::~DatalogParser()
 {
-
+	for (unsigned int i = 0; i < token_vector.size(); i++)
+	{
+		delete token_vector.at(i);
+	}
 }
 
 
@@ -226,12 +229,19 @@ void DatalogParser::parse_tokens()
 	try
 	{
 		datalogProgram();
+		cout << "Success!" << endl;
 	}
 	catch (string e)
 	{
 		cout << "Failure!\n  (" << token_vector.at(token_number)->get_type() << ",\""<< token_vector.at(token_number)->get_output() << "\"," << token_vector.at(token_number)->get_line() << ")" << endl;
 	}
 }
+
+void DatalogParser::get_domain()
+{
+
+}
+
 string DatalogParser::to_string()
 {
 	return "hello world";

@@ -39,6 +39,7 @@ public:
 
 	//normal functions
 	void parse_tokens();
+	void get_domain();
 	string to_string();
 };
 
