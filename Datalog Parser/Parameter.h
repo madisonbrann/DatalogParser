@@ -37,7 +37,7 @@ public:
 		ss << ID << "(";
 		for (unsigned int i = 0; i < parameter_contents.size(); i++)
 		{
-			ss << "'" << parameter_contents.at(i) << "'";
+			ss << parameter_contents.at(i);
 			if (i != parameter_contents.size() - 1) ss << ",";
 		}
 		ss << ")";

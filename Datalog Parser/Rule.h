@@ -40,6 +40,8 @@ public:
 			ss << predicate_list.at(i)->to_string();
 			if (i != predicate_list.size() - 1) ss << ",";
 		}
+		ss << ".";
+		ss << endl;
 		return ss.str();;
 	}
 };
