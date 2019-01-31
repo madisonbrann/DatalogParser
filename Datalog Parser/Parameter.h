@@ -34,7 +34,7 @@ public:
 	string to_string()
 	{
 		stringstream ss;
-		ss << ID << "(";
+		ss << "(" << ID << ",";
 		for (unsigned int i = 0; i < parameter_contents.size(); i++)
 		{
 			ss << parameter_contents.at(i);
@@ -42,6 +42,11 @@ public:
 		}
 		ss << ")";
 		return ss.str();
+	}
+
+	void removeFirstString()
+	{
+		parameter_contents.erase(parameter_contents.begin());
 	}
 };
 

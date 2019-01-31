@@ -1,11 +1,20 @@
 #include "DatalogParser.h"
+#include "Predicate.h"
+#include "Parameter.h"
+#include "Rule.h"
 #include <iostream>
 using namespace std;
+
+vector<Predicate*> SchemePredicates;
+vector<Predicate*> FactPredicates;
+vector<Rule*> RulePredicates;
+vector<Predicate*> QueriePredicates;
 
 DatalogParser::DatalogParser(vector<Token*> token_vector_in)
 {
 	token_vector = token_vector_in;
 	token_number = 0;
+	
 }
 DatalogParser::~DatalogParser()
 {
@@ -13,6 +22,23 @@ DatalogParser::~DatalogParser()
 	{
 		delete token_vector.at(i);
 	}
+	for (unsigned int i = 0; i < FactPredicates.size(); i++)
+	{
+		delete FactPredicates.at(i);
+	}
+	for (unsigned int i = 0; i < RulePredicates.size(); i++)
+	{
+		delete RulePredicates.at(i);
+	}
+	for (unsigned int i = 0; i < SchemePredicates.size(); i++)
+	{
+//		delete SchemePredicates.at(i);
+	}
+	for (unsigned int i = 0; i < QueriePredicates.size(); i++)
+	{
+		delete QueriePredicates.at(i);
+	}
+	delete SchemePredicates[0];
 }
 
 
@@ -25,41 +51,45 @@ void DatalogParser::match(string item)
 	}
 	token_number++;
 }
-void DatalogParser::operator_thing()
+void DatalogParser::operator_thing(Parameter* myParameter)
 {
 	if (token_vector.at(token_number)->get_type() == "ADD")
 	{
+		myParameter->addString(token_vector.at(token_number)->get_output());
 		match("ADD");
 	}
 	else
 	{
+		myParameter->addString(token_vector.at(token_number)->get_output());
 		match("MULTIPLY");
 	}
 }
-void DatalogParser::expression()
+void DatalogParser::expression(Parameter* myParameter)
 {
 	match("LEFT_PAREN");
-	parameter();
-	operator_thing();
-	parameter();
+	parameter(myParameter);
+	operator_thing(myParameter);
+	parameter(myParameter);
 	match("RIGHT_PAREN");
 }
-void DatalogParser::parameter()
+void DatalogParser::parameter(Parameter* myParameter)
 {
 	if (token_vector.at(token_number)->get_type() == "STRING")
 	{
+		myParameter->addString(token_vector.at(token_number)->get_output());
 		match("STRING");
 	}
 	else if (token_vector.at(token_number)->get_type() == "ID")
 	{
+		myParameter->addString(token_vector.at(token_number)->get_output());
 		match("ID");
 	}
 	else
 	{
-		expression();
+		expression(myParameter);
 	}
 }
-void DatalogParser::idList()
+void DatalogParser::idList(Parameter* myParameter)
 {
 	if (token_vector.at(token_number)->get_type() == "RIGHT_PAREN")
 	{
@@ -68,11 +98,12 @@ void DatalogParser::idList()
 	else
 	{
 		match("COMMA");
+		myParameter->addString(token_vector.at(token_number)->get_output());
 		match("ID");
-		idList();
+		idList(myParameter);
 	}
 }
-void DatalogParser::stringList()
+void DatalogParser::stringList(Parameter* myParameter)
 {
 	if (token_vector.at(token_number)->get_type() == "RIGHT_PAREN")
 	{
@@ -81,11 +112,12 @@ void DatalogParser::stringList()
 	else
 	{
 		match("COMMA");
+		myParameter->addString(token_vector.at(token_number)->get_output());
 		match("STRING");
-		stringList();
+		stringList(myParameter);
 	}
 }
-void DatalogParser::parameterList()
+void DatalogParser::parameterList(Parameter* myParameter)
 {
 	if (token_vector.at(token_number)->get_type() == "RIGHT_PAREN")
 	{
@@ -94,11 +126,11 @@ void DatalogParser::parameterList()
 	else
 	{
 		match("COMMA");
-		parameter();
-		parameterList();
+		parameter(myParameter);
+		parameterList(myParameter);
 	}
 }
-void DatalogParser::predicateList()
+void DatalogParser::predicateList(Rule* myRule)
 {
 	if (token_vector.at(token_number)->get_type() == "PERIOD")
 	{
@@ -107,55 +139,75 @@ void DatalogParser::predicateList()
 	else
 	{
 		match("COMMA");
-		predicate();
-		predicateList();
+		predicate(myRule);
+		predicateList(myRule);
 	}
 }
-void DatalogParser::predicate()
+void DatalogParser::predicate(Rule* myRule)
 {
+	Predicate* myPredicate = new Predicate(token_vector.at(token_number)->get_output());
 	match("ID");
 	match("LEFT_PAREN");
-	parameter();
-	parameterList();
+	Parameter* myParameter = new Parameter(token_vector.at(token_number)->get_output());
+	myPredicate->addParameter(myParameter);
+	parameter(myParameter);
+	parameterList(myParameter);
 	match("RIGHT_PAREN");
+	myParameter->removeFirstString();
+	myRule->addPredicate(myPredicate);
 }
-void DatalogParser::headPredicate()
+void DatalogParser::headPredicate(Rule* myRule)
 {
+	Predicate* myPredicate = new Predicate(token_vector.at(token_number)->get_output());
 	match("ID");
 	match("LEFT_PAREN");
+	Parameter* myParameter = new Parameter(token_vector.at(token_number)->get_output());
+	myPredicate->addParameter(myParameter);
 	match("ID");
-	idList();
+	idList(myParameter);
+	myRule->addPredicate(myPredicate);
 	match("RIGHT_PAREN");
 }
 void DatalogParser::query()
 {
-	predicate();
+	Rule* myRule = new Rule();
+	 predicate(myRule);
 	match("Q_MARK");
 }
 void DatalogParser::rule()
 {
-	headPredicate();
+	Rule* myRule = new Rule();
+	headPredicate(myRule);
 	match("COLON_DASH");
-	predicate();
-	predicateList();
+	predicate(myRule);
+	predicateList(myRule);
 	match("PERIOD");
+	RulePredicates.push_back(myRule);
 }
 void DatalogParser::fact()
 {
+	Predicate* myFactPredicate = new Predicate(token_vector.at(token_number)->get_output());
 	match("ID");
 	match("LEFT_PAREN");
+	Parameter* myParameter = new Parameter(token_vector.at(token_number)->get_output());
+	myFactPredicate->addParameter(myParameter);
 	match("STRING");
-	stringList();
+	stringList(myParameter);
 	match("RIGHT_PAREN");
 	match("PERIOD");
+	FactPredicates.push_back(myFactPredicate);
 }
 void DatalogParser::scheme()
 {
+	Predicate* mySchemePredicate = new Predicate(token_vector.at(token_number)->get_output());
 	match("ID");
 	match("LEFT_PAREN");
+	Parameter* myParameter = new Parameter(token_vector.at(token_number)->get_output());
+	mySchemePredicate->addParameter(myParameter);
 	match("ID");
-	idList();
+	idList(myParameter);
 	match("RIGHT_PAREN");
+	SchemePredicates.push_back(mySchemePredicate);
 }
 void DatalogParser::queryList()
 {
@@ -244,5 +296,10 @@ void DatalogParser::get_domain()
 
 string DatalogParser::to_string()
 {
-	return "hello world";
+	stringstream ss;
+	for (unsigned int i = 0; i < RulePredicates.size(); i++)
+	{
+		ss << RulePredicates.at(i)->to_string() << endl;
+	}
+	return ss.str();
 }

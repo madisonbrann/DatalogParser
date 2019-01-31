@@ -11,7 +11,7 @@ using namespace std;
 class Rule
 {
 private:
-	vector<Parameter*> predicate_list;
+	vector<Predicate*> predicate_list;
 
 public:
 	Rule()
@@ -26,7 +26,7 @@ public:
 		}
 	}
 
-	void addPredicate(Parameter* myPredicate)
+	void addPredicate(Predicate* myPredicate)
 	{
 		predicate_list.push_back(myPredicate);
 	}
@@ -34,14 +34,23 @@ public:
 	string to_string()
 	{
 		stringstream ss;
-		ss << "Rules:\n" << predicate_list.at(0)->to_string() << " :- ";
+		string temp;
+		temp = predicate_list.at(0)->rule_to_string();
+		temp.erase(temp.begin() + temp.size() - 1);
+		ss << temp << " :- ";
 		for (unsigned int i = 1; i < predicate_list.size(); i++)
 		{
-			ss << predicate_list.at(i)->to_string();
-			if (i != predicate_list.size() - 1) ss << ",";
+			if (i != predicate_list.size() - 1)
+			{
+				ss << predicate_list.at(i)->rule_to_string();
+			}
+			else
+			{
+				temp = predicate_list.at(0)->rule_to_string();
+				temp.at(temp.size() - 1) = '.';
+				ss << temp;
+			}
 		}
-		ss << ".";
-		ss << endl;
 		return ss.str();;
 	}
 };

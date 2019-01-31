@@ -5,6 +5,8 @@
 #include <vector>
 #include <sstream>
 #include "Token.h"
+#include "Parameter.h"
+#include "Rule.h"
 
 using namespace std;
 
@@ -18,15 +20,15 @@ public:
 	virtual ~DatalogParser();
 	// grammar functions
 	void match(string item);
-	void operator_thing ();
-	void expression();
-	void parameter();
-	void idList();
-	void stringList();
-	void parameterList();
-	void predicateList();
-	void predicate();
-	void headPredicate();
+	void operator_thing (Parameter* myParameter);
+	void expression(Parameter* myParameter);
+	void parameter(Parameter* myParameter);
+	void idList(Parameter* myParameter);
+	void stringList(Parameter* myParameter);
+	void parameterList(Parameter* myParameter);
+	void predicateList(Rule* myRule);
+	void predicate(Rule* myRule);
+	void headPredicate(Rule* myRule);
 	void query();
 	void rule();
 	void fact();

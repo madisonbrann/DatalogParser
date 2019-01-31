@@ -2,6 +2,7 @@
 #define PREDICATE
 
 #include <string>
+#include <iostream>
 #include "Parameter.h"
 
 using namespace std;
@@ -20,7 +21,10 @@ public:
 	}
 	virtual ~Predicate()
 	{
-
+		for (unsigned int i = 0; i < content.size(); i++)
+		{
+			delete content.at(i);
+		}
 	}
 
 	void addParameter(Parameter* myParameter)
@@ -30,12 +34,23 @@ public:
 	string to_string()
 	{
 		stringstream ss;
-		ss << name << ":\n";
+		ss << name;
 		for (unsigned int i = 0; i < content.size(); i++)
 		{
 			ss << content.at(i)->to_string();
 			if (name != "Schemes") ss << ".";
 			ss << endl;
+		}
+		return ss.str();
+	}
+
+	string rule_to_string()
+	{
+		stringstream ss;
+		ss << name;
+		for (unsigned int i = 0; i < content.size(); i++)
+		{
+			ss << content.at(i)->to_string() << ",";
 		}
 		return ss.str();
 	}
